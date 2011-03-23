@@ -1,0 +1,11 @@
+<%def name="page_title()">
+    Add new gift
+</%def>
+
+<form method="POST" action="/admin/gift/add">
+    <label>Name:</label>
+    <input type="text" name="name"/>
+    <input type="hidden" name="_event_hash"
+           value="${event_data.get('_hash')}"/>
+    <input type="submit" name="action" value="Submit"/>
+</form>

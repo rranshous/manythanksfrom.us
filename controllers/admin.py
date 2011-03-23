@@ -1,6 +1,7 @@
 from helpers import get_event_data, get_gift_data
 
 from event import EventController
+from gift import GiftController
 
 class AdminController:
     """
@@ -10,3 +11,4 @@ class AdminController:
     """
 
     event = EventController()
+    gift = GiftController()

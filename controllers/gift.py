@@ -23,6 +23,7 @@ class GiftController:
 
         # push them to the page if they didn't give args
         if not kwargs:
+            cherrypy.log('debug','returning add page')
             return render('/admin/gift/add.html',event_data=event_data)
 
         # if we got args than we want to add a new gift

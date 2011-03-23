@@ -1,6 +1,7 @@
 import time
 from templates import render
 from cherrypy import HTTPRedirect, HTTPError
+import cherrypy
 
 try:
     import json
@@ -35,8 +36,17 @@ def _get_data(obj_type,_hash=None):
     if not _hash:
         return {}
 
+    # hash must be a string
+    _hash = str(_hash)
+
     # try and pull the event data based on hash
-    json_data = data_client.get('/%s/%s' % (obj_type,_hash))
+    key = '/%s/%s' % (obj_type,_hash)
+    json_data = data_client.get(key)
+
+    cherrypy.log('debug','%s got data: %s' % (key,json_data))
+
+    if not json_data:
+        return None
 
     # get the obj from the json
     data = json.loads(json_data)
@@ -59,11 +69,16 @@ def _set_data(obj_type,_hash=None,data={}):
     if not _hash:
         _hash = create_hash()
 
+    # hash must be a string
+    _hash = str(_hash)
+
     # set the hash in the data
     data['_hash'] = _hash
 
     # turn our data into JSON
     json_data = json.dumps(data)
+
+    cherrypy.log('debug','setting data: %s' % json_data)
 
     # set our data
     data_client.set('/%s/%s' % (obj_type,_hash), json_data)
