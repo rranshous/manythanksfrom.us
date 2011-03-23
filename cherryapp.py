@@ -3,7 +3,7 @@
 import logging as log
 import cherrypy
 from controllers import AuthController, AdminController
-from helpers import get_gift_data, get_event_data
+from helpers import get_gift_data, get_event_data, render
 
 class Root:
     

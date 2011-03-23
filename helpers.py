@@ -1,6 +1,8 @@
 import time
 from lib.base import data_client
 
+from templates import render
+
 def _get_data(obj_type,_hash=None):
     """
     if passed a string will try and return
