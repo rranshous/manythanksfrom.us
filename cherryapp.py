@@ -42,8 +42,8 @@ class Root:
             raise error('404')
 
         # the event may not use a home page
-        #if not event_data.get('home_page'):
-        #    raise error('404')
+        if not event_data.get('public'):
+            raise error('404')
 
         # if they want the home page, we'll give it up
         r = render('/event/basic.html',event_data=event_data)

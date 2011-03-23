@@ -1,0 +1,29 @@
+<%def name="page_title()">
+    Update Event
+</%def>
+
+<form method="POST" action="/admin/event/update">
+    <p>
+        <label>Name:</label>
+        <input type="text" name="name"
+               value="${event_data.get('name','')}"/>
+    </p>
+
+    <p>
+        <label>Public:</label>
+        <select name="public">
+            <option value="">No</option>
+            <option ${'selected' if event_data.get('public') else ''}
+                    value="1">Yes</option>
+        </select>
+    </p>
+
+    <p>
+        <label>General Thanks:</label>
+        <textarea name="general_thanks">${event_data.get('general_thanks','')}</textarea>
+    </p>
+
+    <input type="hidden" name="_hash" value="${event_data.get('_hash')}"/>
+
+    <input type="submit" name="action" value="Submit"/>
+</form>

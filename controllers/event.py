@@ -49,15 +49,17 @@ class EventController:
 
         # if they only passed in the hash is a request for the page
         if _hash and not kwargs:
-            return render('/admin/event/update.html')
+            return render('/admin/event/update.html',
+                          event_data=event_data)
 
         # update the data
         #  right now we are taking the args at face value,
         #  later something will be smarter
+        cherrypy.log('debug','updating event from kwargs: %s' % kwargs)
         event_data.update(**kwargs)
 
         # push it back
-        set_event_data(data=event_data)
+        set_event_data(_hash,event_data)
 
         # kick them to back to the update page
         redirect('/admin/event/update/%s' % _hash)

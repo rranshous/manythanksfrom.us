@@ -4,8 +4,18 @@
 
 
 <form method="POST" action="/admin/event/add">
-    <label>Name:</label>
-    <input type="text" name="name"/>
+    <p>
+        <label>Name:</label>
+        <input type="text" name="name"/>
+    </p>
+
+    <p>
+        <label>Public:</label>
+        <select name="public">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select>
+    </p>
 
     <input type="submit" name="action" value="Submit"/>
 </form>
