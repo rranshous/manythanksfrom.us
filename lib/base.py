@@ -1,3 +1,7 @@
+import memcache
+import cherrypy
+from helpers import render
+
 
 # the data client is going to be our api
 # for getting / setting keys. for now
@@ -7,3 +11,6 @@
 
 # TODO read the address' from config
 data_client = memcache.Client(['127.0.0.1:11211'])
+
+
+

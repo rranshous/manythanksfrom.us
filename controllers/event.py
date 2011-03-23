@@ -1,5 +1,6 @@
-from helpers import get_event_data, set_event_data, set_active_event
+from helpers import get_event_data, set_event_data
 from gift import GiftController
+from lib.base import *
 
 class EventController:
     """
@@ -54,7 +55,7 @@ class EventController:
 
         # if they only passed in the hash is a request for the page
         if _hash and not kwargs:
-            return render('/admin/event/update',
+            return render('/admin/event/update.html')
 
         # update the data
         #  right now we are taking the args at face value,

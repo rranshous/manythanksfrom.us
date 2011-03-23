@@ -2,13 +2,11 @@
 
 import logging as log
 import cherrypy
-from controllers import AuthController, AdminController
+from controllers import AdminController
 from helpers import get_gift_data, get_event_data, render
 
 class Root:
     
-    login = AuthController()
-
     admin = AdminController()
 
     @cherrypy.expose
@@ -26,7 +24,7 @@ class Root:
             # if we found it return the page
             # if not we'll let it fall through to event
             if gift_data:
-                event_data = get_event_data(gift_data.get('event_hash'))
+                event_data = get_event_data(gift_data.get('_event_hash'))
                 return render('/gift/basic.html',gift_data=gift_data,
                                                  event_data=event_data)
 
@@ -47,4 +45,4 @@ class Root:
 
 if __name__ == '__main__':
     app = cherrypy.Application(Root())
-    cherrypy.quickstart(app, config='./cherryconfig')
+    cherrypy.quickstart(app, config='./cherryconfig.ini')

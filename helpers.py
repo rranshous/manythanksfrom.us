@@ -1,7 +1,13 @@
 import time
-from lib.base import data_client
-
 from templates import render
+from cherrypy import HTTPRedirect, HTTPError
+
+def redirect(*args):
+    url = '/'.join((str(x) for x in args))
+    raise HTTPRedirect(url)
+
+def error(*args):
+    return HTTPError(*args)
 
 def _get_data(obj_type,_hash=None):
     """
