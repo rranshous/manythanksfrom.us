@@ -1,6 +1,6 @@
 import memcache
 import cherrypy
-from helpers import render
+from helpers import *
 
 
 # the data client is going to be our api

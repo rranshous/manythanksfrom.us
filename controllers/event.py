@@ -48,7 +48,7 @@ class EventController:
 
         # if they didn't pass an event ..
         if not event_data:
-            return error('404')
+            raise error(404)
 
         # set this event as our active one
         set_active_event(_hash)

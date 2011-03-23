@@ -10,6 +10,10 @@ class Root:
     admin = AdminController()
 
     @cherrypy.expose
+    def index(self):
+        return render('/home.html')
+
+    @cherrypy.expose
     def default(self,event_hash,description,gift_hash=None):
         # we are going to assume that a default
         # is an attemp to view a page / list
