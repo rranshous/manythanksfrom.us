@@ -1,0 +1,21 @@
+initial goals:
+
+published pages
+ gift giver's name
+ text blurb
+ picture
+
+opaque or public url's for the thank you pages
+
+option to have home page which includes text blurb / picture / page list
+
+
+important features to add on:
+ page templates
+ email reminders
+ 
+
+url scheme
+
+/<event id>/<event name>/<person's name / id hash>
+/admin/...
