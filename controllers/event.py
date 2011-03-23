@@ -35,11 +35,8 @@ class EventController:
         # push it to the server
         _hash = set_event_data(data=event_data)
 
-        # set this event as the active one
-        set_active_event(_hash)
-
         # and kick them to the edit page
-        return redirect('/admin/event/update/%s' % _hash)
+        redirect('/admin/event/update/%s' % _hash)
 
     @cherrypy.expose
     def update(self,_hash=None,**kwargs):
@@ -49,9 +46,6 @@ class EventController:
         # if they didn't pass an event ..
         if not event_data:
             raise error(404)
-
-        # set this event as our active one
-        set_active_event(_hash)
 
         # if they only passed in the hash is a request for the page
         if _hash and not kwargs:
@@ -66,6 +60,6 @@ class EventController:
         set_event_data(data=event_data)
 
         # kick them to back to the update page
-        return redirect('/admin/event/update/%s' % _hash)
+        redirect('/admin/event/update/%s' % _hash)
 
 

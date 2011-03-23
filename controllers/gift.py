@@ -29,7 +29,7 @@ class GiftController:
         gift_data = get_gift_data()
 
         # update the gift's event
-        gift_data.set('_event_hash',event_data.get('_hash'))
+        gift_data['_event_hash'] = event_data.get('_hash')
 
         # update it's data
         gift_data.update(kwargs)
@@ -39,7 +39,7 @@ class GiftController:
 
         # kick them to the edit page
         event_hash = event_data.get('_hash')
-        return redirect('/admin/gift/update/%s' % _hash)
+        redirect('/admin/gift/update/%s' % _hash)
 
     @cherrypy.expose
     def update(self,_hash=None,**kwargs):
@@ -63,6 +63,6 @@ class GiftController:
         _hash = set_gift_data(_hash,gift_data)
 
         # redirect them to the update page
-        return redirect('/admin/gift/update/%s' % _hash)
+        redirect('/admin/gift/update/%s' % _hash)
 
 

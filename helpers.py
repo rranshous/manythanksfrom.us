@@ -2,6 +2,13 @@ import time
 from templates import render
 from cherrypy import HTTPRedirect, HTTPError
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+from lib.data_client import data_client
+
 def add_flash(msg_type,msg=None):
     if not msg:
         msg = msg_type
@@ -29,7 +36,10 @@ def _get_data(obj_type,_hash=None):
         return {}
 
     # try and pull the event data based on hash
-    data = data_client.get('/%s/%s' % (obj_type,_hash))
+    json_data = data_client.get('/%s/%s' % (obj_type,_hash))
+
+    # get the obj from the json
+    data = json.loads(json_data)
 
     # oh well, couldn't find it
     if not data:
@@ -50,10 +60,13 @@ def _set_data(obj_type,_hash=None,data={}):
         _hash = create_hash()
 
     # set the hash in the data
-    data.set('_hash',_hash)
+    data['_hash'] = _hash
+
+    # turn our data into JSON
+    json_data = json.dumps(data)
 
     # set our data
-    data_client.set('/%s/%s' % (obj_type,_hash,data))
+    data_client.set('/%s/%s' % (obj_type,_hash), json_data)
 
     # give them back the hash
     return _hash

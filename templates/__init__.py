@@ -9,9 +9,8 @@ lookup = TemplateLookup(directories=[here],format_exceptions=True,
                         output_encoding='utf-8', encoding_errors='replace')
 
 def render(path,**kwargs):
-    global errors, warnings, info, lookup
+    cherrypy.log('debug','rendering: %s' % path)
     template = lookup.get_template(path)
-    cherrypy.log('request: %s' % cherrypy.request)
     kwargs.update({'session':cherrypy.session,
                    'request':cherrypy.request,
                    'current_guest':cherrypy.session.get('guest'),
