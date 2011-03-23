@@ -14,7 +14,8 @@ class Root:
         return render('/home.html')
 
     @cherrypy.expose
-    def default(self,event_hash,description,gift_hash=None):
+    def default(self,event_hash,description,
+                     gift_hash=None,gift_name=None):
         # we are going to assume that a default
         # is an attemp to view a page / list
 
@@ -41,8 +42,8 @@ class Root:
             raise error('404')
 
         # the event may not use a home page
-        if not event_data.get('home_page'):
-            raise error('404')
+        #if not event_data.get('home_page'):
+        #    raise error('404')
 
         # if they want the home page, we'll give it up
         r = render('/event/basic.html',event_data=event_data)

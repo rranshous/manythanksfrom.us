@@ -1,0 +1,25 @@
+## a basic event template is going to have a space for
+## the genral thank you's
+## perhaps a pic
+
+## and than a list of the ppl who sent gifts that 
+## are links to the gifts page
+
+
+<p id="general_thanks">
+    ${event_data.get('general_thanks','')}
+</p>
+
+
+<p id="thanks_list">
+    I'd like to also say thank you to all the people who sent me gifts.
+    <ul>
+    % for gift_data in h.iter_gifts_from_event(event_data.get('_hash')):
+        <ul>
+        <a href="/${event_data.get('_hash')}/${event_data.get('name')}/${gift_data.get('_hash')}/${gift_data.get('name')}">
+            ${gift_data.get('name')}
+        </a>
+        </ul>
+    % endfor
+    </ul>
+</p>

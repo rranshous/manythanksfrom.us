@@ -24,6 +24,14 @@ def redirect(*args):
 def error(*args):
     return HTTPError(*args)
 
+def iter_gifts_from_event(event_hash):
+    # we are going to yield up the data
+    # for each of the gifts associated w/ the event
+    event_data = get_event_data(event_hash)
+    if event_data:
+        for gift_hash in event_data.get('_gift_hashes',[]):
+            yield get_gift_data(gift_hash)
+
 def _get_data(obj_type,_hash=None):
     """
     if passed a string will try and return
