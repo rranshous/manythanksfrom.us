@@ -15,11 +15,11 @@
     I'd like to also say thank you to all the people who sent me gifts.
     <ul>
     % for gift_data in h.iter_gifts_from_event(event_data.get('_hash')):
-        <ul>
+        <li>
         <a href="/${event_data.get('_hash')}/${event_data.get('name')}/${gift_data.get('_hash')}/${gift_data.get('name')}">
             ${gift_data.get('name')}
         </a>
-        </ul>
+        </li>
     % endfor
     </ul>
 </p>
