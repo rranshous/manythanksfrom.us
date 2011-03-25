@@ -1,4 +1,5 @@
 import memcache
+import cherrypy
 
 # the data client is going to be our api
 # for getting / setting keys. for now
@@ -7,7 +8,8 @@ import memcache
 # versitale (as well as not just init itself on import)
 
 # TODO read the address' from config
-data_client = memcache.Client(['127.0.0.1:11211'])
+address = cherrypy.config.get('storage_address')
+data_client = memcache.Client([address])
 
 
 

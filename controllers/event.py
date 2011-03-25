@@ -1,4 +1,3 @@
-from helpers import get_event_data, set_event_data
 from gift import GiftController
 from lib.base import *
 
@@ -35,6 +34,11 @@ class EventController:
         # push it to the server
         _hash = set_event_data(data=event_data)
 
+        # if they passed in any images, save them
+        if 'image' in kwargs:
+            set_event_image(_hash,kwargs.get('image').file.read())
+            del kwargs['image']
+
         # and kick them to the edit page
         redirect('/admin/event/update/%s' % _hash)
 
@@ -60,6 +64,11 @@ class EventController:
 
         # push it back
         set_event_data(_hash,event_data)
+
+        # if they gave us a new image save it
+        if 'image' in kwargs:
+            set_event_image(_hash,kwargs.get('image').file.read())
+            del kwargs['image']
 
         # kick them to back to the update page
         redirect('/admin/event/update/%s' % _hash)

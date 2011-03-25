@@ -24,6 +24,8 @@ def redirect(*args):
 def error(*args):
     return HTTPError(*args)
 
+
+## FK functions
 def iter_gifts_from_event(event_hash):
     # we are going to yield up the data
     # for each of the gifts associated w/ the event
@@ -32,6 +34,35 @@ def iter_gifts_from_event(event_hash):
         for gift_hash in event_data.get('_gift_hashes',[]):
             yield get_gift_data(gift_hash)
 
+
+## Image functions
+def _set_image(_type,_hash,data):
+    """
+    save the obj's image to the drive using
+    the type as the namespace
+    """
+    # right now the way we are saving limits each
+    # type to a single image
+    base_path = cherrypy.config.get('save_root')
+    path = os.path.join(base_path,_type,_hash)
+    with file(path,'wb') as fh:
+        fh.write(data)
+    return True
+
+def _get_image(_type,_hash):
+    base_path = cherrypy.config.get('save_root')
+    path = os.path.join(base_path,_type,_hash)
+    with file(path,'rb') as fh:
+        return fh.read()
+
+def set_event_image(_hash,data):
+    _set_image('event',_hash,data)
+
+def get_event_image(_hash):
+    _get_image('event',_hash)
+
+
+## Obj functions
 def _get_data(obj_type,_hash=None):
     """
     if passed a string will try and return
@@ -131,7 +162,7 @@ def set_gift_data(_hash=None,data={}):
 
 def create_hash():
     """
-    returns a new unique event hash
+    returns a new unique hash
     """
     # could do better ..
     return hash(time.time())
