@@ -7,7 +7,6 @@ import cherrypy
 # client, later this will probably become more
 # versitale (as well as not just init itself on import)
 
-# TODO read the address' from config
 address = cherrypy.config.get('storage_address')
 data_client = memcache.Client([address])
 
