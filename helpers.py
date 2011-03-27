@@ -165,6 +165,18 @@ def set_gift_data(_hash=None,data={}):
     """
     return _set_data('gift',_hash,data)
 
+def get_active_user_data():
+    if not cherrypy.session.get('user_hash'):
+        return False
+
+    return get_user_data(cherrypy.session.get('user_hash'))
+
+
+def set_active_user(_hash):
+    cherrypy.session['user_hash'] = _hash
+    return True
+
+## Utils
 def create_hash():
     """
     returns a new unique hash

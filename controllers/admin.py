@@ -19,5 +19,11 @@ class AdminController(BaseController):
     @cherrypy.expose
     def index(self):
         # return back the admin home page
+
+        # get our user's data
+        user_data = get_active_user_data()
+
+        # we need to get the user's events
+        events_data = iter_events_from_user(_user_hash)
         return render('/admin/home.html')
 
