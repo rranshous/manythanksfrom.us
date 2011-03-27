@@ -2,36 +2,42 @@ import memcache
 import cherrypy
 
 # the data client is going to be our api
-# for getting / setting keys. for now
-# we are just strait up using the memcache
-# client, later this will probably become more
-# versitale (as well as not just init itself on import)
+# for getting / setting keys.
 
-address = '127.0.0.1:11211'
-data_client = memcache.Client([address])
+# the currently being used DataClient instance
+active_instance = None
 
-
-# TODO: start using the DataClient obj
-
-class DataClient:
-    active_instance = None
+class DataClient(object):
 
     def __init__(self):
         # tracking the open instance using
         # the class attribute
-        self.active_instance = self
+        cherrypy.log('debug','setting active: %s' % self)
+        global active_instance
+        active_instance = self
 
     @classmethod
     def instance(cls):
-        return self.active_instance
+        global active_instance
+        return active_instance
 
-class KawaiiDataClient:
-    def __init__(self):
+class KawaiiDataClient(DataClient):
+    # TODO: reattack this client
+    #       w/ a custom version of the memcache
+    #       client that doesn't expect to fail some times
+    def __init__(self,memcached_address=None):
+        super(KawaiiDataClient,self).__init__()
+
         # we use the memcache client
         self.memcache_client = None
         
         # the address of our server
-        self.memcached_address = None
+        self.memcached_address = memcached_address
+
+        # if we already know the address than
+        # setup the connection
+        if self.memcached_address:
+            self._reset_connection()
 
     def _connected(self):
         # TODO: return true if memcache is connected
@@ -40,14 +46,18 @@ class KawaiiDataClient:
 
     def _reset_connection(self):
         # TODO: reset memcached connection
-        c = memcache.Client([self.memcached_address])
-        self.memcache_client = c
+        if self.memcache_client:
+            self.memcache_client.forget_dead_hosts()
+        else:
+            c = memcache.Client([self.memcached_address])
+            self.memcache_client = c
         return self.memcache_client
 
     @classmethod
     def instance(cls):
         # we want to make sure we are connected
-        self = cls.active_instance
+        global active_instance
+        self = active_instance
         if not self._connected():
             self._reset_connection()
         return self

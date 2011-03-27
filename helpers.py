@@ -2,13 +2,12 @@ import time
 from templates import render
 from cherrypy import HTTPRedirect, HTTPError
 import cherrypy
+from lib.data_client import KawaiiDataClient as DataClient
 
 try:
     import json
 except ImportError:
     import simplejson as json
-
-from lib.data_client import data_client
 
 def add_flash(msg_type,msg=None):
     if not msg:
@@ -71,6 +70,9 @@ def _get_data(obj_type,_hash=None):
     it will return a blank dict
     """
 
+    # get our data client
+    data_client = DataClient.instance()
+
     # no identifier = new obj
     if not _hash:
         return {}
@@ -103,6 +105,9 @@ def _set_data(obj_type,_hash=None,data={}):
     if no hash is provided a new one is created
     in either case the hash is returned.
     """
+
+    # get our data client
+    data_client = DataClient.instance()
 
     # generate a hash if they didn't pass one
     if not _hash:

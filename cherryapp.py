@@ -3,6 +3,7 @@
 import cherrypy
 from controllers import AdminController
 from lib.base import *
+from lib.data_client import KawaiiDataClient as DataClient
 
 class Root:
     
@@ -51,5 +52,12 @@ class Root:
 
 
 if __name__ == '__main__':
-    app = cherrypy.Application(Root())
-    cherrypy.quickstart(app, config='./cherryconfig.ini')
+    # setup config
+    cherrypy.config.update('./cherryconfig.ini')
+
+    # instantiate our data client
+    DataClient(cherrypy.config.get('storage_address'))
+
+    # setup our app
+    app = cherrypy.Application(Root(),config='./cherryconfig.ini')
+    cherrypy.quickstart(app)
