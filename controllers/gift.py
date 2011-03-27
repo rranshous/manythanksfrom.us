@@ -1,7 +1,9 @@
 from helpers import get_gift_data, get_event_data
 from lib.base import *
 
-class GiftController:
+from base import BaseController
+
+class GiftController(BaseController):
     """
     provides interface for managing gifts
     """

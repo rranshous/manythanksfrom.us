@@ -1,7 +1,8 @@
-from gift import GiftController
 from lib.base import *
 
-class EventController:
+from base import BaseController
+
+class EventController(BaseController):
     """
     provides interface for managing events
     """
