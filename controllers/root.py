@@ -6,11 +6,12 @@ from admin import AdminController
 
 class RootController(BaseController):
     
+    # admin section of the site
     admin = AdminController()
 
     @cherrypy.expose
     def index(self):
-        r = render('/home.html')
+        # render back the home page of the site
         return render('/home.html')
 
     @cherrypy.expose
@@ -20,7 +21,7 @@ class RootController(BaseController):
         # is an attemp to view a page / list
 
         # the args should be:
-        #  <event hash> <description> <page hash/name>
+        #  <event hash> <description> <gift hash> <gift name>
 
         # if we have a page than lets see if it exists
         if gift_hash:
