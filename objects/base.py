@@ -4,6 +4,7 @@ from formencode import validators
 # the attributes an object can have as well as
 # include helper / access methods
 
+
 # class stands for a related data type
 class Relative(object):
     pass
@@ -33,12 +34,32 @@ class Boolean(Attribute):
 Hash = String
 
 
+
 # objects define what data can be stored
 # what type and provides helpers
 class BaseObject(object):
     
     # data storage
     _hash = Hash()
+
+    @classmethod
+    def serialize_data(cls,data):
+        return json.dumps(data)
+
+    @classmethod
+    def deserialize_data(cls,data):
+        return json.loads(data)
+
+    @classmethod
+    def _create_hash(cls):
+        """
+        returns a new hash for an obj
+        """
+        # for now doing this sloppy / easy
+        md5 = hashlib.md5()
+        md5.update(time.time())
+        i = int(md5.hexdigest(),16)
+        return i
 
     @classmethod
     def _get_NS(cls):
@@ -105,3 +126,45 @@ class BaseObject(object):
 
         # return it for good measure
         return event_data
+
+
+    @classmethod
+    def get_data(cls,_hash=None):
+        """
+        returns a skeleton of the obj data if no hash is passed,
+        else returns the data for the obj
+        """
+        
+        # first, if no hash was sent, return skeleton
+        if not _hash:
+            return cls.get_skeleton()
+
+        # if they did pass a hash, get the obj's data
+        key = cls.storage_key(_hash)
+
+        # deserialize the data off the wire
+        data = cls.deserialize_data(data_client.get(key))
+
+        return data
+
+    @classmethod
+    def set_data(cls,data=None):
+        """
+        set's an objects data. if there is no hash in the data
+        one will be added. the data's hash is returned
+        """
+        
+        # if the data doesn't have a hash, give it one
+        if not data.get('_hash'):
+            data['_hash'] = cls.create_hash()
+
+        # push the data to storage
+        key = cls.storage_key(data.get('_hash'))
+
+        # serialize the data as it goes out the door
+        data_client.set(key,cls.serialize_data(data))
+
+        return data.get('_hash')
+
+
+
