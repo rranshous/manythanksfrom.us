@@ -1,6 +1,7 @@
 from lib.base import *
 
 from base import BaseController
+import objects as o
 
 class EventController(BaseController):
     """
@@ -27,13 +28,16 @@ class EventController(BaseController):
             return render('/admin/event/add.html')
 
         # if we got kwargs than lets create a new event
-        event_data = get_event_data()
+        #event_data = get_event_data()
+        event_data = o.Event.get_data()
 
         # update our data w/ the passed values
-        event_data.update(**kwargs)
+        #event_data.update(**kwargs)
+        event_data = o.Event.update_and_validate(event_data,**kwargs)
 
         # push it to the server
-        _hash = set_event_data(data=event_data)
+        #_hash = set_event_data(data=event_data)
+        _hash = o.Event.set_data(event_data)
 
         # if they passed in any images, save them
         if 'image' in kwargs:
@@ -60,7 +64,6 @@ class EventController(BaseController):
         # update the data
         #  right now we are taking the args at face value,
         #  later something will be smarter
-        cherrypy.log('debug','updating event from kwargs: %s' % kwargs)
         event_data.update(**kwargs)
 
         # push it back

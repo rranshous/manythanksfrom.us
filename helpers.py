@@ -25,6 +25,15 @@ def error(*args):
 
 
 ## FK functions
+
+# TODO: make generic version
+
+def iter_events_from_user(user_hash):
+    user_data = get_user_data(user_hash)
+    if users_data:
+        for event_hash in user_data.get('_event_hashes',[]):
+            yield get_event_data(event_hash)
+
 def iter_gifts_from_event(event_hash):
     # we are going to yield up the data
     # for each of the gifts associated w/ the event
@@ -130,6 +139,11 @@ def _set_data(obj_type,_hash=None,data={}):
     # give them back the hash
     return _hash
 
+def get_user_data(_hash=None)
+    return _get_data('user',_hash)
+
+def set_user_data(_hash=None,data={}):
+    return _set_data('user',_hash,data)
 
 def get_event_data(_hash=None):
     """
