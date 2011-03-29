@@ -1,4 +1,6 @@
 from formencode import validators
+from lib.data_client import KawaiiDataClient as DataClient
+import cherrypy
 
 # objects are kind of like models they describe
 # the attributes an object can have as well as
@@ -134,6 +136,9 @@ class BaseObject(object):
         returns a skeleton of the obj data if no hash is passed,
         else returns the data for the obj
         """
+
+        # get our data client
+        data_client = DataClient.instance()
         
         # first, if no hash was sent, return skeleton
         if not _hash:
@@ -153,6 +158,9 @@ class BaseObject(object):
         set's an objects data. if there is no hash in the data
         one will be added. the data's hash is returned
         """
+
+        # get our data client
+        data_client = DataClient.instance()
         
         # if the data doesn't have a hash, give it one
         if not data.get('_hash'):
@@ -166,5 +174,34 @@ class BaseObject(object):
 
         return data.get('_hash')
 
+    @classmethod
+    def iter_relatives_data(cls,obj_data):
+        """
+        see get_relatives_data + iter magic
+        """
+        
+        # check and see if there is a list of
+        # FK hashes of our type on the object
+        key = '_%s_hashes' % self._get_NS()
+        for _hash in obj_data.get(key,[]):
+            yield cls.get_data(_hash)
 
+    @classmethod
+    def get_relatives_data(cls,obj_data,single=False):
+        """
+        pass it another obj type's data. we will return
+        back a list (or single item if single=True) of
+        the data for the obj's of this type who relate
+        to the data passed.
+        """
+        
+        to_return = []
+        for data in cls.iter_relatives_data(obj_data):
+            # if they only want a single value, give them the first
+            if single:
+                return data
 
+            # if you want the whole list collect'm up
+            to_return.append(data)
+
+        return to_return
