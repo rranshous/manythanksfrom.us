@@ -5,7 +5,7 @@ class EventObject(BaseObject):
     # data storage attributes
     name = String()
     blurb = String()
-    public = Boolean()
+    public = Bool()
     
     # relational accessors
     gifts = Relative()

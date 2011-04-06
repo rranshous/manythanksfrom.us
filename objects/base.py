@@ -1,6 +1,12 @@
 from formencode import validators
 from lib.data_client import KawaiiDataClient as DataClient
 import cherrypy
+import hashlib
+import time
+try:
+    import json
+except ImportError:
+    import jsonify as json
 
 # objects are kind of like models they describe
 # the attributes an object can have as well as
@@ -28,7 +34,7 @@ class Attribute(object):
 class String(Attribute):
     pass
 
-class Boolean(Attribute):
+class Bool(Attribute):
     pass
 
 # right now just a string, later might
@@ -40,12 +46,10 @@ Hash = String
 # objects define what data can be stored
 # what type and provides helpers
 class BaseObject(object):
-    
-    # data storage
-    _hash = Hash()
 
     @classmethod
     def serialize_data(cls,data):
+        # we need to clean the data before it goes in
         return json.dumps(data)
 
     @classmethod
@@ -59,16 +63,16 @@ class BaseObject(object):
         """
         # for now doing this sloppy / easy
         md5 = hashlib.md5()
-        md5.update(time.time())
+        md5.update(str(time.time()))
         i = int(md5.hexdigest(),16)
-        return i
+        return str(i)
 
     @classmethod
     def _get_NS(cls):
         # if there isn't one defined
-        if not getattr(cls,'NS'):
+        if not getattr(cls,'NS',None):
             # it's our name lowercase
-            return cls.__name__.lower()[:-5] # cut Object
+            return cls.__name__.lower()[:-6] # cut Object
 
         # if it is defined return it
         return self.NS
@@ -76,7 +80,7 @@ class BaseObject(object):
     @classmethod
     def storage_key(cls,_hash):
         """ returns the key for storage of obj """
-        return '/%s/%s' % (self.get_NS(),_hash)
+        return (u'/%s/%s' % (cls._get_NS(),_hash)).encode('UTF-8')
 
     @classmethod
     def get_skeleton(cls):
@@ -85,10 +89,10 @@ class BaseObject(object):
         a key entry for each attribute
         """
         skel = {}
-        for k in dirs(cls):
+        for k in dir(cls):
             attr = getattr(cls,k,None)
             if isinstance(attr,Attribute):
-                skel[attr] = None
+                skel[k] = None
 
         return skel
 
@@ -119,15 +123,15 @@ class BaseObject(object):
         return data
 
     @classmethod
-    def update_and_validate(cls,event_data,update_dict):
+    def update_and_validate(cls,obj_data,update_dict):
         # we are going to validate the the new data
         valid_data = cls.validate(update_dict)
 
         # now uddate the data we were passed
-        event_data.update(valid_data)
+        obj_data.update(valid_data)
 
         # return it for good measure
-        return event_data
+        return obj_data
 
 
     @classmethod
@@ -147,8 +151,17 @@ class BaseObject(object):
         # if they did pass a hash, get the obj's data
         key = cls.storage_key(_hash)
 
+        # grab the data
+        data = data_client.get(key)
+
+        cherrypy.log('got data: %s %s' % (key,data))
+
+        # if we didn't get anything return None
+        if not data:
+            return None
+
         # deserialize the data off the wire
-        data = cls.deserialize_data(data_client.get(key))
+        data = cls.deserialize_data(data)
 
         return data
 
@@ -164,13 +177,18 @@ class BaseObject(object):
         
         # if the data doesn't have a hash, give it one
         if not data.get('_hash'):
-            data['_hash'] = cls.create_hash()
+            data['_hash'] = cls._create_hash()
 
         # push the data to storage
         key = cls.storage_key(data.get('_hash'))
 
         # serialize the data as it goes out the door
-        data_client.set(key,cls.serialize_data(data))
+        s_data = cls.serialize_data(data)
+        
+        cherrypy.log('setting data: %s' % s_data)
+
+        # and set it
+        data_client.set(key,s_data)
 
         return data.get('_hash')
 
@@ -179,12 +197,17 @@ class BaseObject(object):
         """
         see get_relatives_data + iter magic
         """
-        
-        # check and see if there is a list of
-        # FK hashes of our type on the object
-        key = '_%s_hashes' % self._get_NS()
-        for _hash in obj_data.get(key,[]):
-            yield cls.get_data(_hash)
+
+        # only do something if we got obj data
+        if not obj_data:
+            yield None
+
+        else:
+            # check and see if there is a list of
+            # FK hashes of our type on the object
+            key = '_%s_hashes' % cls._get_NS()
+            for _hash in obj_data.get(key,[]):
+                yield cls.get_data(_hash)
 
     @classmethod
     def get_relatives_data(cls,obj_data,single=False):
@@ -213,6 +236,16 @@ class BaseObject(object):
         """
 
         # we are going to add a reference to the other obj
-        ns = self._get_NS()
+        ns = cls._get_NS()
         other_obj_data['_%s_hash' % ns] = obj_data.get('_hash')
         return other_obj_data
+
+    @classmethod
+    def get_image_path(cls,obj_data):
+        """
+        returns the relative image path for the obj
+        """
+        
+        # the image path is going to be /type/hash
+        return '%s%s%s' % (cls._get_NS(),os.sep,obj_data.get('_hash'))
+

@@ -29,8 +29,11 @@ class EventController(BaseController):
         # if we got kwargs than lets create a new event
         event_data = o.Event.get_data()
 
+        # associate to us
+        o.User.set_relative(get_active_user_data(),event_data)
+
         # update our data w/ the passed values
-        event_data = o.Event.update_and_validate(event_data,**kwargs)
+        event_data = o.Event.update_and_validate(event_data,kwargs)
 
         # push it to the server
         _hash = o.Event.set_data(event_data)
@@ -60,7 +63,7 @@ class EventController(BaseController):
         # update the data
         #  right now we are taking the args at face value,
         #  later something will be smarter
-        event_data = o.Event.update_and_validate(event_data,**kwargs)
+        event_data = o.Event.update_and_validate(event_data,kwargs)
 
         # push it back
         o.Event.set_data(event_data)

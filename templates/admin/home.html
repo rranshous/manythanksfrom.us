@@ -1,6 +1,17 @@
 <%inherit file="/admin/base.html"/>
 
-## we are going to provide a dashboard interface
-## which show's your current events, some info
-## about the gifts that you've sent thank you fors
+<a href="/admin/event/add">Add Event</a>
+
+<div>
+    <span>Events:</span>
+    % for event_data in event_datas:
+        <span>${event_data.get('name')}</span>
+        <div>
+            % for gift_data in o.Gift.iter_relatives_data(event_data):
+                <span>${gift_data.get('name')}</span>
+            % endfor
+        </div>
+    % endfor
+</div>
+
 

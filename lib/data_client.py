@@ -1,5 +1,6 @@
 import memcache
 import cherrypy
+import logging
 
 # the data client is going to be our api
 # for getting / setting keys.
@@ -25,7 +26,7 @@ class KawaiiDataClient(DataClient):
     # TODO: reattack this client
     #       w/ a custom version of the memcache
     #       client that doesn't expect to fail some times
-    def __init__(self,memcached_address=None):
+    def __init__(self,memcached_address='127.0.0.1:11211'):
         super(KawaiiDataClient,self).__init__()
 
         # we use the memcache client
@@ -38,6 +39,7 @@ class KawaiiDataClient(DataClient):
         # setup the connection
         if self.memcached_address:
             self._reset_connection()
+
 
     def _connected(self):
         # TODO: return true if memcache is connected

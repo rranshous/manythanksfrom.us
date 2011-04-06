@@ -1,7 +1,5 @@
 from lib.base import *
-
 from base import BaseController
-
 import objects as o
 
 class GiftController(BaseController):
@@ -36,10 +34,15 @@ class GiftController(BaseController):
         o.Event.set_relative(event_data,gift_data)
 
         # update it's data
-        gift_data = o.Gift.update_and_validate(gift_data,**kwargs)
+        gift_data = o.Gift.update_and_validate(gift_data,kwargs)
 
         # push it back
         _hash = o.Gift.set_data(gift_data)
+
+        # if we got an image set it
+        if 'image' in kwargs:
+            path = o.Gift.get_image_path(gift_data)
+            save_image_data(path,kwargs.get('image').file.read())
 
         # kick them to the edit page
         redirect('/admin/gift/update/%s' % _hash)
@@ -62,10 +65,15 @@ class GiftController(BaseController):
                           event_data=event_data,gift_data=gift_data)
 
         # guess they want to update
-        gift_data = o.Gift.update_and_validate(gift_data,**kwargs)
+        gift_data = o.Gift.update_and_validate(gift_data,kwargs)
 
         # push our data back out
         _hash = o.Gift.set_data(gift_data)
+
+        # if we got an image set it
+        if 'image' in kwargs:
+            path = o.Gift.get_image_path(gift_data)
+            save_image_data(path,kwargs.get('image').file.read())
 
         # redirect them to the update page
         redirect('/admin/gift/update/%s' % _hash)

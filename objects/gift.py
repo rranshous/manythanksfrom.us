@@ -7,9 +7,11 @@ class GiftObject(BaseObject):
     blurb = String()
     email_address = String()
     postal_address = String()
-    thank_you_sent = Boolean()
-    public = Boolean()
+    thank_you_sent = Bool()
+    public = Bool()
 
     # relatives
     events = Relative()
     users = Relative()
+
+

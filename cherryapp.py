@@ -5,7 +5,6 @@ from controllers import RootController
 from lib.base import *
 from lib.data_client import KawaiiDataClient as DataClient
 
-
 if __name__ == '__main__':
     # setup config
     cherrypy.config.update('./cherryconfig.ini')
