@@ -1,4 +1,3 @@
-from helpers import get_gift_data, get_event_data
 from lib.base import *
 
 from base import BaseController
@@ -34,7 +33,7 @@ class GiftController(BaseController):
         gift_data = o.Gift.get_data()
 
         # update the gift's event
-        gift_data['_event_hash'] = event_data.get('_hash')
+        o.Event.set_relative(event_data,gift_data)
 
         # update it's data
         gift_data = o.Gift.update_and_validate(gift_data,**kwargs)

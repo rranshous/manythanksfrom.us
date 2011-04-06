@@ -205,3 +205,14 @@ class BaseObject(object):
             to_return.append(data)
 
         return to_return
+
+    @classmethod
+    def set_relative(cls,obj_data,other_obj_data):
+        """
+        associates the obj with the other obj
+        """
+
+        # we are going to add a reference to the other obj
+        ns = self._get_NS()
+        other_obj_data['_%s_hash' % ns] = obj_data.get('_hash')
+        return other_obj_data

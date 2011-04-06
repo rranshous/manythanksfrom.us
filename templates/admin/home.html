@@ -4,17 +4,3 @@
 ## which show's your current events, some info
 ## about the gifts that you've sent thank you fors
 
-<div id="events">
-    <ul>
-    % for event_data in events_data:
-        <li>
-            <span class="name">${event_data.get('name')}</span> --
-            <span class="gifts">
-                ${h.iter_gifts_from_event(event_data.get('_hash'))} gifts
-            </span>
-            <a class="option">Add Thanks</a>
-            <a class="option">Edit Thanks</a>
-        </li>
-    % endfor
-    </ul>
-</div>

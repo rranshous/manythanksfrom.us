@@ -1,7 +1,5 @@
 import cherrypy
 
-from helpers import get_event_data, get_gift_data
-
 from event import EventController
 from gift import GiftController
 from base import BaseController
