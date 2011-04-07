@@ -27,7 +27,7 @@ class AdminController(BaseController):
         # get our user's data
         user_data = get_active_user_data()
 
-        cherrypy.log('active_user: %s %s' % 
+        cherrypy.log('active_user: %s %s' %
                      (cherrypy.session.get('user_hash'),user_data))
 
         # we need to get the user's events

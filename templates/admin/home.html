@@ -5,7 +5,11 @@
 <div>
     <span>Events:</span>
     % for event_data in event_datas:
-        <span>${event_data.get('name')}</span>
+        <span>
+            <a href="/admin/event/update/${event_data.get('_hash')}">
+                ${event_data.get('name')}
+            </a>
+        </span>
         <div>
             % for gift_data in o.Gift.iter_relatives_data(event_data):
                 <span>${gift_data.get('name')}</span>

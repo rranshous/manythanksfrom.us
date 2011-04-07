@@ -133,6 +133,18 @@ class BaseObject(object):
         # return it for good measure
         return obj_data
 
+    @classmethod
+    def delete_data(cls,_hash):
+        """
+        delete's the objs data
+        """
+
+        # get our obj's key
+        key = cls.storage_key(_hash)
+
+        # delete that mother
+        data_client = DataClient.instance()
+        return data_client.delete(key)
 
     @classmethod
     def get_data(cls,_hash=None):

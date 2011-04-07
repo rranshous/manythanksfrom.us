@@ -78,3 +78,5 @@ class KawaiiDataClient(DataClient):
         # mapped to memcache
         return self.memcache_client.get(*args)
 
+    def delete(self,*args):
+        return self.memcache_client.delete(*args)

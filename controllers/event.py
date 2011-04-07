@@ -76,4 +76,14 @@ class EventController(BaseController):
         # kick them to back to the update page
         redirect('/admin/event/update/%s' % _hash)
 
+    @cherrypy.expose
+    def delete(self,_hash=None):
+        # make sure we have our hash
+        if not _hash:
+            raise error(404)
 
+        # delete that mother
+        o.Event.delete_data(_hash)
+
+        # push them to admin page
+        redirect('/admin/')
