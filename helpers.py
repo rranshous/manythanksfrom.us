@@ -4,6 +4,8 @@ from cherrypy import HTTPRedirect, HTTPError
 import cherrypy
 from lib.data_client import KawaiiDataClient as DataClient
 import objects as o
+import os.path, os
+import mimetypes
 
 try:
     import json
@@ -27,14 +29,59 @@ def error(*args):
 
 
 ## Image functions
+def get_extension_from_upload(upload):
+    # guess the extension from the mimetype
+    extension = mimetypes.guess_extension(str(upload.content_type))
+
+    # wtf mate
+    if not extension:
+        extension = '.jpg' # what the hell
+
+    return extension
+
+def save_object_image(obj,obj_data,upload):
+    # where we savin' it ?
+    path = obj.get_image_path(obj_data)
+
+    # get the uploads extension
+    extension = get_extension_from_upload(upload)
+
+    # concat that bitch to the path
+    path += extension or ''
+
+    # grab our data
+    data = upload.file.read()
+    if data:
+        cherrypy.log('saving image: %s %s' % (len(data),path))
+        path = save_image_data(path,data)
+    else:
+        cherrypy.log('no data')
+
+    return path
+
+
 
 def save_image_data(rel_path,data):
     """
     given relative path and image data
     saves the image to the correct place
     """
+
+
     base_path = cherrypy.config.get('save_root')
-    path = os.path.join(base_path,_type,_hash)
+    path = os.path.join(base_path,rel_path)
+
+    # we don't need ./
+    if path.startswith('./'):
+        path = path[2:]
+
+    # make sure it exists
+    dir_path = os.path.dirname(path)
+    if not os.path.exists(dir_path):
+        # create that motha
+        os.makedirs(dir_path)
+
+    # and out we go
     with file(path,'wb') as fh:
         fh.write(data)
     return path

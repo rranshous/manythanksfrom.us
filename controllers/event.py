@@ -40,8 +40,8 @@ class EventController(BaseController):
 
         # if they passed in any images, save them
         if 'image' in kwargs:
-            set_event_image(_hash,kwargs.get('image').file.read())
-            del kwargs['image']
+            rel_path = save_object_image(o.Event,kwargs.get('image'))
+            event_data['rel_image_path'] = rel_path
 
         # and kick them to the edit page
         redirect('/admin/event/update/%s' % _hash)
@@ -70,8 +70,8 @@ class EventController(BaseController):
 
         # if they gave us a new image save it
         if 'image' in kwargs:
-            set_event_image(_hash,kwargs.get('image').file.read())
-            del kwargs['image']
+            rel_path = save_object_image(o.Event,kwargs.get('image'))
+            event_data['rel_image_path'] = rel_path
 
         # kick them to back to the update page
         redirect('/admin/event/update/%s' % _hash)

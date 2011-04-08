@@ -6,6 +6,7 @@ class EventObject(BaseObject):
     name = String()
     blurb = String()
     public = Bool()
+    rel_image_path = String()
     
     # relational accessors
     gifts = Relative()

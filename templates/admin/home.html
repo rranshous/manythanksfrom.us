@@ -1,21 +1,44 @@
 <%inherit file="/admin/base.html"/>
 
-<a href="/admin/event/add">Add Event</a>
 
-<div>
-    <span>Events:</span>
-    % for event_data in event_datas:
-        <span>
-            <a href="/admin/event/update/${event_data.get('_hash')}">
-                ${event_data.get('name')}
-            </a>
+<div id="events">
+    <div class="header">
+        <span>Events</span>
+        <span class="add">
+            <a href="/admin/event/add">Add New Event</a>
         </span>
-        <div>
+    </div>
+
+    % for event_data in event_datas:
+    <% event_hash = event_data.get('_hash') %>
+    <div class="event">
+        <div class="header">
+            <span class="name">${event_data.get('name')}</span>
+            <span class="add_gift">
+                <a href="/admin/gift/add/${event_hash}">Add Gift</a>
+            </span>
+            <span class="edit">
+                <a href="/admin/event/update/${event_hash}">Edit</a>
+            </span>
+            <span class="delete">
+                <a href="/admin/event/delete/${event_hash}">Delete</a>
+            </span>
+        </div>
+        <div class="gifts">
             % for gift_data in o.Gift.iter_relatives_data(event_data):
-                <span>${gift_data.get('name')}</span>
+            <% gift_hash = gift_data.get('_hash') %>
+            <div class="gift">
+                <span class="name">${gift_data.get('name','')}</span>
+                <span class="edit">
+                   <a href="/admin/gift/update/${gift_hash}">Edit</a>
+                </span>
+                <span class="edit">
+                    <a href="/admin/gift/delete/${gift_hash}"/>Delete</a>
+                </span>
+            </div>
             % endfor
         </div>
+    </div>
     % endfor
 </div>
-
 

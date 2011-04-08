@@ -1,1 +1,39 @@
 <%inherit file="/admin/gift/base.html"/>
+
+<form method="POST" action="/admin/gift/update">
+    <p>
+        <label>Name:</label>
+        <input type="text" name="name"
+               value="${gift_data.get('name','')}"/>
+    </p>
+    <p>
+        <label>Email:</label>
+        <input type="text" name="email_address"
+               value="${gift_data.get('email_address','')}"/>
+    </p>
+    <p>
+        <label>Thank you:</label>
+        <textarea name="blurb">${gift_data.get('blurb','')}</textarea>
+    </p>
+    <p>
+        <label>Public:</label>
+        <select name="public">
+            <option value="">No</option>
+            <option ${'selected' if gift_data.get('public') else ''}
+                    value="1">Yes</option>
+        </select>
+    </p>
+    <p>
+        % if gift_data.get('rel_image_path'):
+            <img width="100px" src="/${gift_data.get('rel_image_path')}"/>
+        % endif
+        <input type="file" name="image">
+    </p>
+
+    <input type="hidden" name="_event_hash"
+           value="${event_data.get('_hash')}"/>
+    <input type="hidden" name="_hash"
+           value="${gift_data.get('_hash')}"/>
+    <input type="submit" name="action" value="Submit"/>
+
+</form>

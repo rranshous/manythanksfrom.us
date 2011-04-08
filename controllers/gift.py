@@ -1,6 +1,7 @@
 from lib.base import *
 from base import BaseController
 import objects as o
+import mimetypes
 
 class GiftController(BaseController):
     """
@@ -41,8 +42,12 @@ class GiftController(BaseController):
 
         # if we got an image set it
         if 'image' in kwargs:
-            path = o.Gift.get_image_path(gift_data)
-            save_image_data(path,kwargs.get('image').file.read())
+            rel_path = save_object_image(o.Gift,gift_data,
+                                         kwargs.get('image'))
+            gift_data['rel_image_path'] = rel_path
+
+        # TODO: not resend data (aka settup "commit" for data client)
+        o.Gift.set_data(gift_data)
 
         # kick them to the edit page
         redirect('/admin/gift/update/%s' % _hash)
@@ -56,7 +61,7 @@ class GiftController(BaseController):
         event_data = o.Event.get_relatives_data(gift_data,single=True)
 
         # no data's ?
-        if not gift_data:
+        if not gift_data or not event_data:
             raise error(404)
 
         # if we didn't get any args, they want the page
@@ -67,15 +72,27 @@ class GiftController(BaseController):
         # guess they want to update
         gift_data = o.Gift.update_and_validate(gift_data,kwargs)
 
-        # push our data back out
-        _hash = o.Gift.set_data(gift_data)
-
         # if we got an image set it
         if 'image' in kwargs:
-            path = o.Gift.get_image_path(gift_data)
-            save_image_data(path,kwargs.get('image').file.read())
+            rel_path = save_object_image(o.Gift,gift_data,
+                                         kwargs.get('image'))
+            gift_data['rel_image_path'] = rel_path
+
+        # push our data back out
+        _hash = o.Gift.set_data(gift_data)
 
         # redirect them to the update page
         redirect('/admin/gift/update/%s' % _hash)
 
+    @cherrypy.expose
+    def delete(self,_hash=None):
+        # make sure we have our hash
+        if not _hash:
+            raise error(404)
+
+        # delete that mother
+        o.Gift.delete_data(_hash)
+
+        # push them to admin page
+        redirect('/admin/')
 

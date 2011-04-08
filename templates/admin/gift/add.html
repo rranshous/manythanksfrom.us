@@ -4,10 +4,30 @@
     Add new gift
 </%def>
 
-<form method="POST" action="/admin/gift/add">
+<form method="POST" enctype="multipart/form-data"
+      action="/admin/gift/add">
     <p>
         <label>Name:</label>
         <input type="text" name="name"/>
+    </p>
+    <p>
+        <label>Email:</label>
+        <input type="text" name="email_address"/>
+    </p>
+    <p>
+        <label>Thank you:</label>
+        <textarea name="blurb"></textarea>
+    </p>
+    <p>
+        <label>Public:</label>
+        <select name="public">
+            <option value="">No</option>
+            <option value="1">Yes</option>
+        </select>
+    </p>
+
+    <p>
+        <input type="file" name="image">
     </p>
 
     <input type="hidden" name="_event_hash"

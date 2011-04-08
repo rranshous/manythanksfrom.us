@@ -3,6 +3,8 @@ from lib.data_client import KawaiiDataClient as DataClient
 import cherrypy
 import hashlib
 import time
+import os
+
 try:
     import json
 except ImportError:
@@ -104,6 +106,7 @@ class BaseObject(object):
         """
 
         to_remove = []
+        valid = {}
 
         # go through all k/v pairs
         for k,v in data.iteritems():
@@ -112,15 +115,9 @@ class BaseObject(object):
             attr = getattr(cls,k,None)
             if isinstance(attr,Attribute):
                 # now validate the attr type
-                data[k] = attr.validate(v)
-            else:
-                to_remove.append(k)
+                valid[k] = attr.validate(v)
 
-        # remove keys that shouldn't be there
-        for k in to_remove:
-            del data[k]
-
-        return data
+        return valid
 
     @classmethod
     def update_and_validate(cls,obj_data,update_dict):
@@ -210,16 +207,19 @@ class BaseObject(object):
         see get_relatives_data + iter magic
         """
 
-        # only do something if we got obj data
-        if not obj_data:
-            yield None
+        cherrypy.log('iter obj data: %s' % obj_data)
 
-        else:
-            # check and see if there is a list of
-            # FK hashes of our type on the object
-            key = '_%s_hashes' % cls._get_NS()
-            for _hash in obj_data.get(key,[]):
-                yield cls.get_data(_hash)
+        # check and see if there is a list of
+        # FK hashes of our type on the object
+        key = '_%s_hashes' % cls._get_NS()
+        for _hash in obj_data.get(key) or []:
+            yield cls.get_data(_hash)
+
+        # also check the single side
+        key = '_%s_hash' % cls._get_NS()
+        _hash = obj_data.get(key)
+        if _hash:
+            yield cls.get_data(_hash)
 
     @classmethod
     def get_relatives_data(cls,obj_data,single=False):
@@ -238,6 +238,10 @@ class BaseObject(object):
 
             # if you want the whole list collect'm up
             to_return.append(data)
+
+        # what if we didn't get anything ?
+        if not to_return and single:
+            return None
 
         return to_return
 
