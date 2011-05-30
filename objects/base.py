@@ -58,16 +58,37 @@ class BaseObject(object):
     def deserialize_data(cls,data):
         return json.loads(data)
 
+
     @classmethod
-    def _create_hash(cls):
+    def _create_hash(cls,data):
         """
-        returns a new hash for an obj
+        returns the hash for the obj, can be based
+        off some data in the obj. if the class specifies
+        a key to hash from and it does not exist,
+        an exception is raised
         """
-        # for now doing this sloppy / easy
+
+        # pull our hash value from the data if we can
+        if cls.hash_key and cls.hash_key in data:
+            _key = data.get(cls.hash_key)
+
+        # if we can't find the key exception time
+        elif cls.hash_key:
+            raise Exception('hash key not found: %s' % (cls.hash_key))
+
+        # if there was no key specified just use the time
+        else:
+            _key = str(time.time())
+
+        return cls._hash(_key)
+
+    @classmethod
+    def _hash(cls,_key):
+
+        # create our hash from the key
         md5 = hashlib.md5()
-        md5.update(str(time.time()))
-        i = int(md5.hexdigest(),16)
-        return str(i)
+        md5.update(_key)
+        return str(int(md5.hexdigest(),16))
 
     @classmethod
     def _get_NS(cls):
@@ -144,7 +165,7 @@ class BaseObject(object):
         return data_client.delete(key)
 
     @classmethod
-    def get_data(cls,_hash=None):
+    def get_data(cls,_hash=None,key=None):
         """
         returns a skeleton of the obj data if no hash is passed,
         else returns the data for the obj
@@ -152,6 +173,10 @@ class BaseObject(object):
 
         # get our data client
         data_client = DataClient.instance()
+
+        # see if they gave us a key to hash
+        if key:
+            _hash = cls._hash(key)
         
         # first, if no hash was sent, return skeleton
         if not _hash:
@@ -186,7 +211,7 @@ class BaseObject(object):
         
         # if the data doesn't have a hash, give it one
         if not data.get('_hash'):
-            data['_hash'] = cls._create_hash()
+            data['_hash'] = cls._create_hash(data)
 
         # push the data to storage
         key = cls.storage_key(data.get('_hash'))

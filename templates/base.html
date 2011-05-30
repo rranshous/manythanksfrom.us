@@ -1,9 +1,12 @@
 <html>
 <head>
     <title>${self.page_title()}</title>
-</head>
+
 <style>
+    body { background: #DACDA0; }
 </style>
+</head>
+
 <body>
     <div id="flashbox">
         % for type in ('info','warning','error'):
@@ -15,9 +18,8 @@
     </div>
 </body>
 
-<%def name="page_title()">
-    HERE
-</%def>
-
-
 ${self.body()}
+
+<%def name="page_title()">
+    Many Thanks from.us
+</%def>

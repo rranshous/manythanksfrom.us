@@ -1,7 +1,6 @@
 import cherrypy
 from helpers import get_active_user_data, set_active_user
 from lib.base import *
-import logging
 from event import EventController
 from gift import GiftController
 from base import BaseController
